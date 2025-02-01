@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { isValidObjectId, Model } from 'mongoose';
@@ -20,7 +24,9 @@ export class UsersService {
   }
 
   findAll() {
-    return this.userModel.find();
+    return this.userModel
+      .find()
+      .populate({ path: 'expenses', select: '-user -__v' });
   }
 
   async findOne(id: string) {
@@ -34,6 +40,7 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     if (!isValidObjectId(id)) throw new BadRequestException('inalid id');
+
     const updateduser = await this.userModel.findByIdAndUpdate(
       id,
       updateUserDto,
@@ -54,10 +61,14 @@ export class UsersService {
   }
 
   async addexpense(userId, expensesId) {
-    const updateduser = await this.userModel.findByIdAndUpdate(userId, {
-      $push: { expenses: expensesId },
-    });
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      userId,
+      { $push: { expenses: expensesId } },
+      { new: true },
+    );
 
-    return updateduser;
+    if (!updatedUser) throw new NotFoundException('User not found');
+
+    return updatedUser;
   }
 }
