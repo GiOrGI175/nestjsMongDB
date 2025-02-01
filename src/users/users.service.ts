@@ -52,4 +52,12 @@ export class UsersService {
 
     return deleteduser;
   }
+
+  async addexpense(userId, expensesId) {
+    const updateduser = await this.userModel.findByIdAndUpdate(userId, {
+      $push: { expenses: expensesId },
+    });
+
+    return updateduser;
+  }
 }

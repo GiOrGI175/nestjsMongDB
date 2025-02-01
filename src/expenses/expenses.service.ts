@@ -4,18 +4,23 @@ import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Expense } from './schema/expense.schema';
 import { Model } from 'mongoose';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class ExpensesService {
   constructor(
     @InjectModel(Expense.name) private ExpenseModel: Model<Expense>,
+    private userService: UsersService,
   ) {}
 
   async create(userId: string, createExpenseDto: CreateExpenseDto) {
+    const user = await this.userService.findOne(userId);
+
     const newExpense = await this.ExpenseModel.create({
       ...createExpenseDto,
-      user: userId,
+      user: user._id,
     });
+    await this.userService.addexpense(user._id, newExpense._id);
 
     return newExpense;
   }
