@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { QueryParamsDto } from './dto/query-params.dto';
+import { QueryParamsPipe } from './pipes/query.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -21,8 +24,20 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll().populate('expenses');
+  findAll(@Query() queryParams: QueryParamsDto) {
+    // console.log(queryParams);
+
+    return this.usersService.findAll(queryParams).populate('expenses');
+  }
+
+  @Get('user-age')
+  getUser(@Query(new QueryParamsPipe()) query: QueryParamsDto) {
+    return this.usersService.getUser(query);
+  }
+
+  @Get('all-user')
+  allUser() {
+    return this.usersService.allUser();
   }
 
   @Get(':id')

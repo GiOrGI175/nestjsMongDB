@@ -8,9 +8,7 @@ import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Expense } from './schema/expense.schema';
 import { isValidObjectId, Model } from 'mongoose';
-import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/schema/user.schema';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class ExpensesService {

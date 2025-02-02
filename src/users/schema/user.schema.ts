@@ -1,3 +1,4 @@
+import { tr } from '@faker-js/faker/.';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Expense } from 'src/expenses/schema/expense.schema';
@@ -13,7 +14,7 @@ export class User {
   @Prop({ type: String })
   email: string;
 
-  @Prop({ type: Number })
+  @Prop({ type: Number, index: true })
   age: number;
 
   @Prop({
